@@ -2,7 +2,7 @@
 // Attacker node (ESP32 #3) for the CAN bus anomaly-detection testbed
 // =====================================================================
 //
-// Part of the bachelor thesis "Implementation and Evaluation of CAN Bus
+// Part of the project "Implementation and Evaluation of CAN Bus
 // Anomaly Detection on ESP32 Hardware". This node generates the attack
 // traffic used to evaluate the detector on an isolated three-node test
 // bench (sender, receiver, attacker). It is not intended for use on any
