@@ -34,14 +34,14 @@ dashboard.
 ├── data/
 │   ├── normal_training_dataset.csv     87,848 normal frames (training/validation)
 │   ├── attack_evaluation_recording.csv 38,759 frames, normal + attacks
-│   └── raw/                      the untouched serial captures (see "Data")
+│   └── raw/                      the untouched serial captures 
 ├── analysis/
-│   ├── analyze_can_log.py        traffic-impact tables (Tables 5.1, 5.2)
-│   └── frequency_baseline.py     rule-based frequency baseline (Section 5.3.4)
+│   ├── analyze_can_log.py        traffic-impact tables 
+│   └── frequency_baseline.py     rule-based frequency baseline 
 ├── evaluation/
-│   └── evaluate_detection.py     detection performance + latency (Tables 5.5, 5.6)
+│   └── evaluate_detection.py     detection performance + latency 
 ├── dashboard/
-│   └── canbert_monitor.py        live detection dashboard (serial / replay)
+│   └── canbert_monitor.py        live detection dashboard 
 ├── requirements.txt
 └── README.md
 ```
@@ -93,47 +93,6 @@ select your ESP32 board, and upload. The sender node also needs the `DHT` and
 
 ---
 
-## Data
-
-`data/raw/` holds the **untouched serial captures** exactly as logged:
-`can_normal_clean_2.csv` (normal traffic) and `capture.csv` (the
-attack-evaluation run). The two files in `data/` are the cleaned versions used
-in the thesis.
-
-**Cleaning — what was and was not done.** The cleaned files contain only
-genuine CAN frames from the recording session:
-- Non-CAN serial lines were removed: ESP32 boot banners (`ets Jul 29 2019 …`,
-  `rst:0x1 (POWERON_RESET)…`, `load:…`) and a few lines where two frames were
-  interleaved on the serial port.
-- The normal capture contains an initial boot session that was interrupted by a
-  board reset (a second CSV header appears partway through the file). Only the
-  frames **after the final reset** — the session that was actually recorded and
-  used — are kept, matching the "data after the last header" rule used in the
-  notebook and baseline script.
-- Line endings were normalised from CRLF to LF.
-
-No frame inside the kept recording session was added, dropped, reordered, or
-edited. The kept rows are byte-for-byte identical to the corresponding rows in
-`data/raw/` (after the two steps above). This preserves the exact frame sequence
-the model was trained and evaluated on.
-
-| File | Frames | Contents |
-|------|-------:|----------|
-| `normal_training_dataset.csv`     | 87,848 | normal traffic only (7 IDs); split into train/validation inside the notebook |
-| `attack_evaluation_recording.csv` | 38,759 | normal traffic with 5 DoS and 3 spoofing attack periods |
-
-**Row format** (one header line, then one frame per row):
-
-```
-timestamp_us,can_id,frame_type,dlc,data_0,data_1,…,data_7
-10024489,0x105,STD,6,FD,FF,FD,FF,E9,03,,
-```
-
-`timestamp_us` is the receiver's `esp_timer_get_time()` value (microseconds
-since boot). Payload columns beyond the frame's DLC are left empty.
-
----
-
 ## The model
 
 `model/canbert_T32.pt` is the trained checkpoint used in the thesis. It is a
@@ -162,11 +121,6 @@ from the sequence-based detection that catches spoofing of a *known* ID. `k = 1`
 was chosen as the smallest `k` whose false-alarm rate on normal validation
 windows met the 0.1 % target.
 
-### Rebuilding the model
-Anyone can retrain from scratch with `training/canbert_colab_training.ipynb`
-(designed for Google Colab, runs locally too). It extracts the prepared windows,
-trains CAN-BERT with the settings above, selects `k`, and writes
-`canbert_T<T>.pt` — the same artifact shipped in `model/`.
 
 ---
 
@@ -184,7 +138,7 @@ python analysis/analyze_can_log.py data/attack_evaluation_recording.csv
 ```
 Reports the attack periods and their effect on bus load and per-ID timing.
 
-### Detection performance and latency — Tables 5.5 and 5.6
+### Detection performance and latency 
 ```bash
 python evaluation/evaluate_detection.py \
     --checkpoint model/canbert_T32.pt \
@@ -213,16 +167,7 @@ after 32 consecutive clean ones.
 
 ---
 
-## Note on reproducing the exact numbers
 
-The scripts reproduce the thesis **method** and its main conclusions: the attack
-periods (5 DoS, 3 spoofing), the near-perfect recall, the choice of `k = 1`, and
-the near-instant DoS detection. Precision and false-alarm rate depend on the
-single random mask drawn per window at inference (`EVAL_PASSES = 1`), so their
-exact values shift slightly with the seed. On this checkpoint and recording,
-`evaluate_detection.py` produces a false-alarm rate of roughly 0.1 % at `k = 1`;
-the original evaluation reported in the thesis is of the same order. The `--seed`
-option makes a run deterministic and repeatable.
 
 ---
 
