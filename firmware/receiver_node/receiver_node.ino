@@ -2,7 +2,7 @@
 // Receiver node (ESP32 #2) for the CAN bus anomaly-detection testbed
 // =====================================================================
 //
-// Part of the bachelor thesis "Implementation and Evaluation of CAN Bus
+// Part of the project "Implementation and Evaluation of CAN Bus
 // Anomaly Detection on ESP32 Hardware". This node is a passive logger: it
 // receives every frame on the shared CAN bus through its TWAI controller
 // and prints each one as a single CSV row over USB serial. A program on
