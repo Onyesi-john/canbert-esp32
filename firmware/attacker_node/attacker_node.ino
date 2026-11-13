@@ -62,10 +62,6 @@ static bool setupCan() {
   return true;
 }
 
-// Transmit one flooding frame. Returns true if it was queued.
-// Timeout 0 means the call does not wait: if the TX queue is full it returns
-// immediately and the next loop iteration tries again, which keeps the
-// transmission rate as high as the bus allows.
 static bool sendFlood() {
   twai_message_t m = {};
   m.identifier = FLOOD_ID;
