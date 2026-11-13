@@ -68,20 +68,18 @@ static void printCsvHeader() {
 void setup() {
   Serial.begin(115200);
 
-  // IMPORTANT:
-  // Opening /dev/ttyUSB0 on the PC may reset the ESP32. After the port is
-  // opened, this delay gives the logger time to attach before any output.
+  
+  // this delay gives the logger time to attach before any output.
   delay(SERIAL_RECORDING_STARTUP_DELAY_MS);
 
   if (!setupCan()) {
-    // Do not print non-CSV diagnostics to the serial stream. If startup
-    // fails, no header is emitted.
+    
     while (true) {
       delay(1000);
     }
   }
 
-  // Start the CSV stream with the header, then print received frames.
+  // This will start the CSV stream with the header, then print received frames.
   printCsvHeader();
 }
 
@@ -93,18 +91,17 @@ void loop() {
     return;
   }
 
-  // Remote frames carry no data payload; they are omitted from the dataset.
+  
   if (m.rtr) {
     return;
   }
 
-  // Timestamp when this frame is processed by the receiver.
+  // This shows the timestamp when this frame is processed by the receiver.
   const int64_t timestampUs = esp_timer_get_time();
 
-  // Classic CAN payload is at most 8 bytes.
+  
   const uint8_t dlc = (m.data_length_code <= 8) ? m.data_length_code : 8;
 
-  // Keep output strictly CSV: one header row, then one row per frame.
   Serial.printf("%lld,0x%03X,%s,%u",
                 (long long)timestampUs,
                 (unsigned int)m.identifier,
@@ -117,7 +114,7 @@ void loop() {
     if (i < dlc) {
       Serial.printf("%02X", m.data[i]);
     }
-    // Empty field for payload columns beyond the received DLC.
+    
   }
 
   Serial.println();
