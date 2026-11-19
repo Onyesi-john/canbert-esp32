@@ -41,7 +41,7 @@
 #define MPU_SCL_PIN         22
 
 #define TRIG_PIN            25
-#define ECHO_PIN            26   // HC-SR04 echo is 5 V: use a divider (e.g. 1k + 2k) to 3.3 V
+#define ECHO_PIN            26   // HC-SR04 echo is 5 V
 #define CLOSE_DISTANCE      20.0f
 
 #define DHT_PIN             4
