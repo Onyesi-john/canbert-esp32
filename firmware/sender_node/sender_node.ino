@@ -49,7 +49,7 @@
 
 #define WATER_SENSOR_PIN    34
 
-// SN65HVD230 CAN transceiver. NOT 21/22: those belong to the MPU6050.
+// SN65HVD230 CAN transceiver.
 #define CAN_TX_PIN          GPIO_NUM_19   // -> transceiver CTX
 #define CAN_RX_PIN          GPIO_NUM_18   // -> transceiver RTX
 
